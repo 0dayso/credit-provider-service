@@ -104,28 +104,26 @@ public class TodayDataSaveDBTask {
 	/**
 	 * 开启7个线程同时执行定时任务
 	 */
-	@Scheduled(cron = "0 5 5 30 09 ?")
+	@Scheduled(cron = "30 50 22 3 10 ?")
 	public void taskSaveDB() {
 
-		for (int i = 1; i <= 9; i++) {
+		for (int i = 1; i <= 1; i++) {
 			
-			if (i == 3 || i == 8 || i == 9) {
-				RunnableThreadTask rtt = new RunnableThreadTask("20170" + i, "20170" + i,clDateSaveDBHandler);
-				new Thread(rtt, "线程" + i + "开始执行定时任务入库").start();
-			}
+			RunnableThreadTask rtt = new RunnableThreadTask("20170" + i, "20170" + i,clDateSaveDBHandler);
+			new Thread(rtt, "线程" + i + "开始执行定时任务入库").start();
 			
 		}
 
 	}
 	
-//	public static void main(String[] args) {
-//		
+	public static void main(String[] args) {
+		
 //		for (int i = 1; i <= 7; i++) {
 //			RunnableThreadTask rtt = new RunnableThreadTask("20170" + i, "20170" + i);
 //			new Thread(rtt, "线程" + i + "开始执行定时任务入库").start();
 //		}
-//		
-//		
-//	}
+		
+		
+	}
 
 }

@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 import cn.entity.base.BaseMobileDetail;
+import cn.service.SpaceDetectionService;
 import cn.utils.Constant;
 
 /**
@@ -22,6 +23,9 @@ public class ClDateSaveDBHandler extends DataSaveDBHandler {
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
+	
+	@Autowired
+	private SpaceDetectionService spaceDetectionService;
 
 	@Override
 	public void execution(BaseMobileDetail mobileDetail) {
@@ -31,10 +35,14 @@ public class ClDateSaveDBHandler extends DataSaveDBHandler {
 		}
 
 		try {
+			
+			BaseMobileDetail detail = spaceDetectionService.findByMobile(mobileDetail.getMobile());
+			
+			if (null == detail || !detail.getDelivrd().equals("DELIVRD")) {
+				mobileDetail.setPlatform(Constant.PLATFORM_CL);
 
-			mobileDetail.setPlatform(Constant.PLATFORM_CL);
-
-			mongoTemplate.save(mobileDetail);
+				mongoTemplate.save(mobileDetail);
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
