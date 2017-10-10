@@ -85,7 +85,7 @@ public class RunnableThreadTask implements Runnable {
 					new InetSocketTransportAddress(InetAddress.getByName("172.16.20.20"), 9300));
 
 			SearchResponse scrollResp = client.prepareSearch(startTime, endTime).addSort("_doc", SortOrder.ASC)
-					.setScroll(new TimeValue(60000)).setSize(100).get();
+					.setScroll(new TimeValue(6000)).setSize(100).get();
 
 			do {
 				for (SearchHit hit : scrollResp.getHits().getHits()) {
@@ -117,6 +117,7 @@ public class RunnableThreadTask implements Runnable {
 			logger.info("=====开始执行创蓝数据入库操作，任务结束时间:" + DateUtils.getNowTime() + "=====");
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("定时任务异常");
 		}
 

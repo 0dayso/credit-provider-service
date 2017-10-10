@@ -25,4 +25,8 @@ public class UUIDTool {
     public String getUUID() {    
         return UUID.randomUUID().toString().replace("-", "");  
     }  
+    
+    public static void main(String[] args) {
+		System.out.println(UUIDTool.getInstance().getUUID());
+	}
 }

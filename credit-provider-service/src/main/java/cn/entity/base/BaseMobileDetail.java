@@ -30,7 +30,7 @@ public class BaseMobileDetail {
 	@Indexed(name = "{'reportTime_': 1}")
 	private Date reportTime; // 返回时间
 
-	private Integer platform; // 平台
+	private Integer platform; // 平台k
 
 	private String content; // 内容
 

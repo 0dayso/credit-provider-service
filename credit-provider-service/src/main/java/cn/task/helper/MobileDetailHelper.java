@@ -1,5 +1,7 @@
 package cn.task.helper;
 
+import java.util.UUID;
+
 import org.springframework.util.StringUtils;
 
 import cn.entity.base.BaseMobileDetail;
@@ -41,7 +43,6 @@ import cn.entity.cu.CU176;
 import cn.entity.cu.CU185;
 import cn.entity.cu.CU186;
 import cn.entity.unknown.UnknownMobileDetail;
-import cn.utils.UUIDTool;
 
 public class MobileDetailHelper {
 
@@ -69,7 +70,7 @@ public class MobileDetailHelper {
 			return null;
 		}
 
-		String id = UUIDTool.getInstance().getUUID();
+//		String UUID.randomUUID().toString().replace("-", "") = UUUUID.randomUUID().toString().replace("-", "")Tool.getInstance().getUUUUID.randomUUID().toString().replace("-", "")();
 		
 		BaseMobileDetail detail = null;
 
@@ -80,119 +81,119 @@ public class MobileDetailHelper {
 			//  分3个 1700 1705 1709
 			String mobi = mobile.substring(0, 4);
 			if (mobi.equals("1700")) {
-				detail = new CT1700(id);
+				detail = new CT1700(UUID.randomUUID().toString().replace("-", ""));
 			} else  if (mobi.equals("1705")) {
-				detail = new CM1705(id);
+				detail = new CM1705(UUID.randomUUID().toString().replace("-", ""));
 			} else if (mobi.equals("1709")) {
-				detail = new CU1709(id);
+				detail = new CU1709(UUID.randomUUID().toString().replace("-", ""));
 			} else {
-				detail = new UnknownMobileDetail(id);
+				detail = new UnknownMobileDetail(UUID.randomUUID().toString().replace("-", ""));
 			}
 			break;
 		case "134":
-			detail = new CM134(id);
+			detail = new CM134(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "135":
-			detail = new CM135(id);
+			detail = new CM135(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "136":
-			detail = new CM136(id);
+			detail = new CM136(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "137":
-			detail = new CM137(id);
+			detail = new CM137(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "138":
-			detail = new CM138(id);
+			detail = new CM138(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "139":
-			detail = new CM139(id);
+			detail = new CM139(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "147":
-			detail = new CM147(id);
+			detail = new CM147(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "150":
-			detail = new CM150(id);
+			detail = new CM150(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "151":
-			detail = new CM151(id);
+			detail = new CM151(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "152":
-			detail = new CM152(id);
+			detail = new CM152(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "157":
-			detail = new CM157(id);
+			detail = new CM157(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "158":
-			detail = new CM158(id);
+			detail = new CM158(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "159":
-			detail = new CM159(id);
+			detail = new CM159(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "178":
-			detail = new CM178(id);
+			detail = new CM178(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "182":
-			detail = new CM182(id);
+			detail = new CM182(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "183":
-			detail = new CM183(id);
+			detail = new CM183(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "184":
-			detail = new CM184(id);
+			detail = new CM184(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "187":
-			detail = new CM187(id);
+			detail = new CM187(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "188":
-			detail = new CM188(id);
+			detail = new CM188(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "133":
-			detail = new CT133(id);
+			detail = new CT133(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "153":
-			detail = new CT153(id);
+			detail = new CT153(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "177":
-			detail = new CT177(id);
+			detail = new CT177(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "180":
-			detail = new CT180(id);
+			detail = new CT180(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "181":
-			detail = new CT181(id);
+			detail = new CT181(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "189":
-			detail = new CT189(id);
+			detail = new CT189(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "130":
-			detail = new CU130(id);
+			detail = new CU130(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "131":
-			detail = new CU131(id);
+			detail = new CU131(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "132":
-			detail = new CU132(id);
+			detail = new CU132(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "145":
-			detail = new CU145(id);
+			detail = new CU145(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "155":
-			detail = new CU155(id);
+			detail = new CU155(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "156":
-			detail = new CU156(id);
+			detail = new CU156(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "176":
-			detail = new CU176(id);
+			detail = new CU176(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "185":
-			detail = new CU185(id);
+			detail = new CU185(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		case "186":
-			detail = new CU186(id);
+			detail = new CU186(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		default:
-			detail = new UnknownMobileDetail(id);
+			detail = new UnknownMobileDetail(UUID.randomUUID().toString().replace("-", ""));
 			break;
 		}
 		
