@@ -4,7 +4,7 @@ eureka:
     serviceUrl:
       defaultZone: http://127.0.0.1:8080/eureka/
 server:
-  port: 8761
+  port: 8766
 spring:
   application:
     name: credit-provider-service
