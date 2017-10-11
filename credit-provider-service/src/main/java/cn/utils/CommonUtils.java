@@ -19,11 +19,11 @@ public class CommonUtils {
 	 * @return
 	 */
 	public static Boolean isNotString(String str){
-		return (null == str || "".equals(str));
+		return (null == str || "".equals(str) || "null".equals(str));
 	}
 	
 	public static void main(String[] args) {
 		System.out.println(CommonUtils.isNotEmpty(null));
-		System.out.println(CommonUtils.isNotString("111"));
+		System.out.println(CommonUtils.isNotString("null"));
 	}
 }
