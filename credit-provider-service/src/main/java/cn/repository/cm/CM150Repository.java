@@ -10,4 +10,6 @@ import cn.repository.base.BaseMobileDetailRepository;
  */
 public interface CM150Repository extends MongoRepository<CM150, String> ,BaseMobileDetailRepository<CM150,String>{
     
+	
+//	Page<CM150> findByMobile(String mobile,Pageable pageable); 
 }

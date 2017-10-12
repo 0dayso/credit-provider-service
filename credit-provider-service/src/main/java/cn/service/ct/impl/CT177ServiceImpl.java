@@ -4,6 +4,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import cn.entity.ct.CT177;
@@ -18,7 +23,10 @@ public class CT177ServiceImpl implements CT177Service{
 	
 	@Override
 	public List<CT177> findByMobileAndReportTime(String mobile, Date startTime, Date endTime) {
-		return repository.findByMobileAndReportTime(mobile, startTime, endTime);
+		Sort sort = new Sort(Direction.DESC,"reportTime");
+		Pageable pageable = new PageRequest(1 - 1, 1, sort);
+		Page<CT177> page  = repository.findByMobileAndReportTime(mobile,startTime,endTime,pageable);
+		return page.getContent();
 	}
 
 	@Override

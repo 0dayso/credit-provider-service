@@ -6,7 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -42,7 +42,7 @@ public class FileUtils {
 
 			csvFile.createNewFile();
 			// GB2312使正确读取分隔符","
-			csvWtriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(csvFile), "GB2312"), 1024);
+			csvWtriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(csvFile), "gbk"), 1024);
 			int num = headList.size() / 2;
 			StringBuffer buffer = new StringBuffer();
 			for (int i = 0; i < num; i++) {
@@ -101,7 +101,7 @@ public class FileUtils {
 			ZipOutputStream out = new ZipOutputStream(new FileOutputStream(strZipName));
 
 			// 需要同时下载的两个文件result.txt ，source.txt
-			
+
 			for (File file : list) {
 				FileInputStream fis = new FileInputStream(file);
 
@@ -121,7 +121,7 @@ public class FileUtils {
 
 				fis.close();
 			}
-			
+
 			out.close();
 
 			System.out.println("生成Demo.zip成功");
@@ -137,7 +137,7 @@ public class FileUtils {
 	 * @param path
 	 */
 	@SuppressWarnings("resource")
-	public static String getFileSize(String path) {
+	public static String getFileSize11(String path) {
 		String size = null;
 		try {
 			size = new FileInputStream(new File(path)).available() / 1024 / 1024 + "M";
@@ -148,13 +148,32 @@ public class FileUtils {
 		return size;
 	}
 
+	public static String getFileSize(String path) {
+		File file  = new File(path);
+		String size = "";
+		if (file.exists() && file.isFile()) {
+			long fileS = file.length();
+			DecimalFormat df = new DecimalFormat("#.00");
+			if (fileS < 1024) {
+				size = "1KB";
+			} else {
+				size = df.format((double) fileS / 1024) + "KB";
+			} 
+		} else if (file.exists() && file.isDirectory()) {
+			size = "";
+		} else {
+			size = "0KB";
+		}
+		return size;
+	}
+
 	public static void main(String[] args) {
 		// File[] files = {new File("C:/test/1255/20170913/3月实号包.csv"),new
 		// File("C:/test/1255/20170913/6月实号包.csv"),new
 		// File("C:/test/1255/20170913/未知号码包.csv")};
 		// FileUtils.createZip(files,"C:/test/1255/20170913/Demo.zip");
 
-		FileUtils.getFileSize("C:/test/1255/20170913/Demo.zip");
+		System.out.println(FileUtils.getFileSize("D:/test/mk0004.txt"));
 	}
 
 	// String therefileName = "thereCSV.csv";// 文件名称
