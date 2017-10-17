@@ -1,14 +1,10 @@
 package cn.task;
 
 import java.net.InetAddress;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
 
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
@@ -29,7 +25,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -132,15 +127,7 @@ public class TodayDataSaveDBTask {
 
 	}
 
-	public static void main(String[] args) {
-
-		// for (int i = 1; i <= 7; i++) {
-		// RunnableThreadTask rtt = new RunnableThreadTask("20170" + i, "20170"
-		// + i);
-		// new Thread(rtt, "线程" + i + "开始执行定时任务入库").start();
-		// }
-
-	}
+	
 
 	// 该任务执行一次 时间 秒 分 时 天 月 年
 	@Scheduled(cron = "20 8 16 8 10 ?")
@@ -220,7 +207,102 @@ public class TodayDataSaveDBTask {
 		}
 
 	}
+	
+	
+	// 该任务执行一次 时间 秒 分 时 天 月 年
+		public void insertMongodbfor(String strdate) {
 
+			try {
+				Settings settings = Settings.builder().put("cluster.name", "cl-es-cluster")
+						.put("client.transport.sniff", true).put("client.transport.ping_timeout", "25s").build();
+
+				@SuppressWarnings("resource")
+				TransportClient client = new PreBuiltTransportClient(settings)
+						.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("172.16.20.20"), 9300));
+				new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						
+						QueryBuilder qb = QueryBuilders.termsQuery("reportTime", strdate);
+
+						Long a = System.currentTimeMillis();
+						SearchResponse scrollResp = client.prepareSearch("201709").setQuery(qb).addSort("_doc", SortOrder.ASC)
+								.setScroll(new TimeValue(60000))
+
+								.setSize(100).get();
+
+						List<BaseMobileDetail> baseList = new ArrayList<BaseMobileDetail>();
+
+						do {
+							for (SearchHit hit : scrollResp.getHits().getHits()) {
+								String json = hit.getSourceAsString();
+
+								JSONObject backjson = (JSONObject) JSONObject.parse(json);
+
+								String mobile = backjson.getString("mobile");
+
+								BaseMobileDetail detail = MobileDetailHelper.getInstance().getBaseMobileDetail(mobile);
+								detail.setAccount(backjson.getString("account"));
+								detail.setCity(backjson.getString("city"));
+								detail.setContent(backjson.getString("content"));
+								detail.setDelivrd(backjson.getString("delivrd"));
+								detail.setMobile(backjson.getString("mobile"));
+								detail.setProductId(backjson.getString("productId"));
+								detail.setProvince(backjson.getString("province"));
+								detail.setReportTime(
+										DateUtils.parseDate(backjson.getString("reportTime"), "yyyy-MM-dd hh:mm:ss"));
+								detail.setSignature(backjson.getString("signature"));
+								try {
+									detail.setCreateTime(DateUtils.getCurrentDateTime());
+								} catch (ParseException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								mongoTemplate.save(detail);
+							}
+
+							scrollResp = client.prepareSearchScroll(scrollResp.getScrollId()).setScroll(new TimeValue(60000))
+									.execute().actionGet();
+						} while (scrollResp.getHits().getHits().length != 0);
+						
+						mongoTemplate.insertAll(baseList);
+						
+					}
+				}, strdate+"线程开始执行定时任务入库").start();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error("=====执行创蓝数据入库出现异常：" + e.getMessage());
+			} 
+
+		}
+		
+		/**
+		 * 执行9月 天天数据入库
+		 */
+		@Scheduled(cron = "0 26 18 16 10 ?")
+		public void insertMongodbfor(){
+			String[] strDate = {"2017-09-19","2017-09-18","2017-09-17","2017-09-16","2017-09-15","2017-09-14","2017-09-13","2017-09-12","2017-09-12","2017-09-11","2017-09-10"};
+			
+//			String[] strDate = {"2017-09-30"};
+			
+			for (int i = 0; i < strDate.length; i++) {
+				this.insertMongodbfor(strDate[i]);
+			}
+			
+		}
+		
+		public static void main(String[] args) {
+
+			String[] strDate = {"2017-09-30","2017-09-28","2017-09-27","2017-09-26","2017-09-25","2017-09-24","2017-09-23","2017-09-22","2017-09-22","2017-09-21","2017-09-20"};
+			
+			for (int i = 0; i < strDate.length; i++) {
+				TodayDataSaveDBTask task = new TodayDataSaveDBTask();
+				task.insertMongodbfor(strDate[i]);
+			}
+
+		}
 	// 该任务执行一次 时间 秒 分 时 天 月 年
 //	@Scheduled(cron = "0 0 22 9 10 ?")
 	public void main111() {
@@ -242,8 +324,6 @@ public class TodayDataSaveDBTask {
 			
 			for (int i = minDay; i <= maxDay; i++) {
 				calendar.set(year, month, i);
-
-				logger.info("开始执行" + DateUtils.formatDate(calendar.getTime(), "yyyy-MM-dd") + "的数据");
 				
 				QueryBuilder qb = QueryBuilders.termsQuery("reportTime", DateUtils.formatDate(calendar.getTime(), "yyyy-MM-dd"));
 
