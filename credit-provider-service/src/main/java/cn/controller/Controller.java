@@ -19,6 +19,8 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.slf4j.Logger;
@@ -246,6 +248,7 @@ public class Controller {
 			TransportClient client = new PreBuiltTransportClient(settings)
 					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("172.16.20.20"), 9300));
 			
+			
 			QueryBuilder qb = QueryBuilders.termsQuery("reportTime", "2017-08-01");
 
 			Long a = System.currentTimeMillis();
@@ -382,7 +385,7 @@ public class Controller {
 			// for (int k = 0; k < 100000; k++) {
 			// String kk = map.get(String.valueOf(k));
 			// if (kk == null) {
-			// System.out.println(k);
+			// System.out.println(k);11
 			// }
 			// }
 			Long b = System.currentTimeMillis();
@@ -402,12 +405,20 @@ public class Controller {
 			TransportClient client = new PreBuiltTransportClient(settings)
 					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("172.16.20.20"), 9300));
 			
+			AggregationBuilder aggregation =  
+	                AggregationBuilders  
+	                        .terms("mobile").field("qid")  
+	                        .subAggregation(  
+	                                AggregationBuilders.topHits("top").sort("reportTime",SortOrder.DESC).size(1)  
+	                        ); 
+			
+			
 			QueryBuilder qb = QueryBuilders.termsQuery("reportTime", "2017-09-30");
 
 			Long a = System.currentTimeMillis();
 			SearchResponse scrollResp = client.prepareSearch("201709").setQuery(qb).addSort("_doc", SortOrder.ASC)
 					.setScroll(new TimeValue(60000))
-
+					.addAggregation(aggregation)
 					.setSize(100).get();
 			// int i = 0;
 			Map<String, String> map = new HashMap<String, String>();
@@ -418,8 +429,9 @@ public class Controller {
 				for (SearchHit hit : scrollResp.getHits().getHits()) {
 					String json = hit.getSourceAsString();
 
-					System.out.println(json);
-//					JSONObject backjson = (JSONObject) JSONObject.parse(json);
+					
+					JSONObject backjson = (JSONObject) JSONObject.parse(json);
+					System.out.println(backjson.getString("mobile"));
 //
 //					String mobile = backjson.getString("mobile");
 //
