@@ -37,12 +37,9 @@ import com.alibaba.fastjson.JSONObject;
 import cn.entity.base.BaseMobileDetail;
 import cn.entity.cm.CM136;
 import cn.entity.ct.CT133;
-import cn.entity.ct.CT1700;
 import cn.service.ForeignService;
 import cn.service.cm.CM136Service;
-import cn.task.InsertThreadTask;
 import cn.task.TodayDataSaveDBTask;
-import cn.task.helper.MobileDetailHelper;
 import cn.utils.DateUtils;
 import cn.utils.UUIDTool;
 import main.java.cn.common.BackResult;
@@ -385,7 +382,7 @@ public class Controller {
 			// for (int k = 0; k < 100000; k++) {
 			// String kk = map.get(String.valueOf(k));
 			// if (kk == null) {
-			// System.out.println(k);11
+			// System.out.println(k);
 			// }
 			// }
 			Long b = System.currentTimeMillis();
