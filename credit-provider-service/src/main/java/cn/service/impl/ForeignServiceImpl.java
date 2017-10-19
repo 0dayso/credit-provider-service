@@ -25,12 +25,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import cn.entity.CvsFilePath;
+import cn.entity.MobileNumberSection;
 import cn.entity.WaterConsumption;
 import cn.entity.base.BaseMobileDetail;
 //import cn.redis.RedisClient;
 import cn.redis.RedisLock;
 import cn.service.CvsFilePathService;
 import cn.service.ForeignService;
+import cn.service.MobileNumberSectionService;
 import cn.service.SpaceDetectionService;
 import cn.utils.CommonUtils;
 import cn.utils.DateUtils;
@@ -69,6 +71,9 @@ public class ForeignServiceImpl implements ForeignService {
 
 	@Autowired
 	private CvsFilePathService cvsFilePathService;
+	
+	@Autowired
+	private MobileNumberSectionService mobileNumberSectionService;
 
 	@Value("${consumeAccountUrl}")
 	private String consumeAccountUrl;
@@ -170,7 +175,7 @@ public class ForeignServiceImpl implements ForeignService {
 							} else {
 								unKonwRowList = new ArrayList<Object>();
 								unKonwRowList.add(lineTxt);
-								unKonwRowList.add("未知");
+								unKonwRowList.add("沉默号");
 								unKonwDataList.add(unKonwRowList);
 							}
 
@@ -210,8 +215,8 @@ public class ForeignServiceImpl implements ForeignService {
 				}
 
 				if (!CommonUtils.isNotEmpty(unKonwDataList)) {
-					logger.info("未知总条数：" + unKonwDataList.size());
-					FileUtils.createCvsFile("未知.csv", filePath, unKonwDataList, head);
+					logger.info("沉默号总条数：" + unKonwDataList.size());
+					FileUtils.createCvsFile("沉默号.csv", filePath, unKonwDataList, head);
 					cvsFilePath.setUnknownSize(String.valueOf(unKonwDataList.size()));
 				}
 
@@ -230,9 +235,9 @@ public class ForeignServiceImpl implements ForeignService {
 				}
 
 				if (!CommonUtils.isNotEmpty(unKonwDataList)) {
-					list.add(new File(filePath + "未知.csv"));
-					cvsFilePath.setUnknownFilePath(userId + "/" + DateUtils.getDate() + "/未知.csv");
-					cvsFilePath.setUnknownFileSize(FileUtils.getFileSize(filePath + "未知.csv"));
+					list.add(new File(filePath + "沉默号.csv"));
+					cvsFilePath.setUnknownFilePath(userId + "/" + DateUtils.getDate() + "/沉默号.csv");
+					cvsFilePath.setUnknownFileSize(FileUtils.getFileSize(filePath + "沉默号.csv"));
 				}
 
 				String zipName = "测试结果包.zip";
@@ -495,7 +500,7 @@ public class ForeignServiceImpl implements ForeignService {
 									|| detail.getDelivrd().equals("MK:0012")) {
 								sixRowList = new ArrayList<Object>();
 								sixRowList.add(detail.getMobile());
-								sixRowList.add("空号");
+//								sixRowList.add("空号");
 //								sixRowList.add(detail.getDelivrd());
 								sixDataList.add(sixRowList);
 							} else if (detail.getDelivrd().equals("HD:31") || detail.getDelivrd().equals("IC:0001")
@@ -508,38 +513,51 @@ public class ForeignServiceImpl implements ForeignService {
 									|| detail.getDelivrd().equals("MI:0004") || detail.getDelivrd().equals("MI:0005")) {
 								sixRowList = new ArrayList<Object>();
 								sixRowList.add(detail.getMobile());
-								sixRowList.add("停机");
+//								sixRowList.add("停机");
 //								sixRowList.add(detail.getDelivrd());
 								sixDataList.add(sixRowList);
 							} else {
-//								unKonwRowList = new ArrayList<Object>();
-//								unKonwRowList.add(lineTxt);
-////								unKonwRowList.add("未知");
-////								unKonwRowList.add(detail.getDelivrd());
-//								unKonwDataList.add(unKonwRowList);
+								unKonwRowList = new ArrayList<Object>();
+								unKonwRowList.add(lineTxt);
+//								unKonwRowList.add("沉默号");
+//								unKonwRowList.add(detail.getDelivrd());
+								unKonwDataList.add(unKonwRowList);
 								
-								thereRowList = new ArrayList<Object>();
-								thereRowList.add(lineTxt);
-//								thereRowList.add("");
-//								thereRowList.add("");
-								thereDataList.add(thereRowList);
+//								thereRowList = new ArrayList<Object>();
+//								thereRowList.add(lineTxt);
+////								thereRowList.add("");
+////								thereRowList.add("");
+//								thereDataList.add(thereRowList);
 								
 							}
 						} else {
 							
-							thereRowList = new ArrayList<Object>();
-							thereRowList.add(lineTxt);
-//							thereRowList.add("");
-//							thereRowList.add("");
-							thereDataList.add(thereRowList);
+							// 二次清洗根据号段
+							MobileNumberSection section = mobileNumberSectionService.findByNumberSection(lineTxt.substring(0, 7));
 							
+							if (null != section) {
+//								thereRowList = new ArrayList<Object>();
+//								thereRowList.add(lineTxt);
+//								thereDataList.add(thereRowList);
+								
+								unKonwRowList = new ArrayList<Object>();
+								unKonwRowList.add(lineTxt);
+								unKonwDataList.add(unKonwRowList);
+							} else {
+								// 放空号
+								sixRowList = new ArrayList<Object>();
+								sixRowList.add(lineTxt);
+//								sixRowList.add("不存在的号段");
+								sixDataList.add(sixRowList);
+								
+//								unKonwRowList = new ArrayList<Object>();
+//								unKonwRowList.add(lineTxt);
+////								unKonwRowList.add("沉默号");
+////								unKonwRowList.add("");
+//								unKonwDataList.add(unKonwRowList);
+							}
 							
-							
-//							unKonwRowList = new ArrayList<Object>();
-//							unKonwRowList.add(lineTxt);
-////							unKonwRowList.add("未知");
-////							unKonwRowList.add("");
-//							unKonwDataList.add(unKonwRowList);
+
 						}
 
 						testCount = testCount + 1;
@@ -578,12 +596,12 @@ public class ForeignServiceImpl implements ForeignService {
 					cvsFilePath.setSixCount(String.valueOf(sixDataList.size()));
 				}
 
-//				if (!CommonUtils.isNotEmpty(unKonwDataList)) {
-//					logger.info("未知总条数：" + unKonwDataList.size());
-//					Object[] wzhead = { "手机号码" };
-//					FileUtils.createCvsFile("未知.csv", filePath, unKonwDataList, wzhead);
-//					cvsFilePath.setUnknownSize(String.valueOf(unKonwDataList.size()));
-//				}
+				if (!CommonUtils.isNotEmpty(unKonwDataList)) {
+					logger.info("沉默号总条数：" + unKonwDataList.size());
+					Object[] wzhead = { "手机号码" };
+					FileUtils.createCvsFile("沉默号.csv", filePath, unKonwDataList, wzhead);
+					cvsFilePath.setUnknownSize(String.valueOf(unKonwDataList.size()));
+				}
 
 				List<File> list = new ArrayList<File>();
 
@@ -599,11 +617,11 @@ public class ForeignServiceImpl implements ForeignService {
 					cvsFilePath.setSixFileSize(FileUtils.getFileSize(filePath + "空号.csv"));
 				}
 
-//				if (!CommonUtils.isNotEmpty(unKonwDataList)) {
-//					list.add(new File(filePath + "未知.csv"));
-//					cvsFilePath.setUnknownFilePath(userId + "/" + DateUtils.getDate() + "/未知.csv");
-//					cvsFilePath.setUnknownFileSize(FileUtils.getFileSize(filePath + "未知.csv"));
-//				}
+				if (!CommonUtils.isNotEmpty(unKonwDataList)) {
+					list.add(new File(filePath + "沉默号.csv"));
+					cvsFilePath.setUnknownFilePath(userId + "/" + DateUtils.getDate() + "/沉默号.csv");
+					cvsFilePath.setUnknownFileSize(FileUtils.getFileSize(filePath + "沉默号.csv"));
+				}
 
 				String zipName = "测试结果包.zip";
 				// 报表文件打包
@@ -789,14 +807,15 @@ public class ForeignServiceImpl implements ForeignService {
 
 	public static void main(String[] args) {
 		// http://127.0.0.1:8767/userAccount/consumeAccount?creUserId=1598&count=100
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("creUserId", 1598);
-		jsonObject.put("count", 100);
-		String responseStr = HttpUtil.createHttpPost("http://127.0.0.1:8767/userAccount/consumeAccount", jsonObject);
-		JSONObject json = JSONObject.fromObject(responseStr);
-
-		if (json.get("resultCode").equals("000000") && json.get("resultObj").equals(Boolean.TRUE)) {
-		}
+//		JSONObject jsonObject = new JSONObject();
+//		jsonObject.put("creUserId", 1598);
+//		jsonObject.put("count", 100);
+//		String responseStr = HttpUtil.createHttpPost("http://127.0.0.1:8767/userAccount/consumeAccount", jsonObject);
+//		JSONObject json = JSONObject.fromObject(responseStr);
+//
+//		if (json.get("resultCode").equals("000000") && json.get("resultObj").equals(Boolean.TRUE)) {
+//		}
+		System.out.println("13817367247".substring(0, 7));
 		// System.out.println(responseStr);
 	}
 

@@ -1,5 +1,9 @@
 package cn.controller;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,12 +38,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 
+import cn.entity.MobileNumberSection;
 import cn.entity.base.BaseMobileDetail;
 import cn.entity.cm.CM136;
 import cn.entity.ct.CT133;
 import cn.service.ForeignService;
+import cn.service.MobileNumberSectionService;
+import cn.service.SpaceDetectionService;
 import cn.service.cm.CM136Service;
 import cn.task.TodayDataSaveDBTask;
+import cn.utils.CommonUtils;
 import cn.utils.DateUtils;
 import cn.utils.UUIDTool;
 import main.java.cn.common.BackResult;
@@ -54,8 +62,8 @@ public class Controller {
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
-	// @Autowired
-	// private SpaceDetectionService spaceDetectionService;
+    @Autowired
+    private SpaceDetectionService spaceDetectionService;
 
 	@Autowired
 	private TodayDataSaveDBTask todayDataSaveDBTask;
@@ -65,6 +73,9 @@ public class Controller {
 
 	@Autowired
 	private CM136Service cM136Service;
+	
+	@Autowired
+	private MobileNumberSectionService mobileNumberSectionService;
 
 	private final static Logger logger = LoggerFactory.getLogger(Controller.class);
 
@@ -236,7 +247,7 @@ public class Controller {
 	}
 
 //	@GetMapping("/mainabc")
-	public void main1(String[] args) {
+	public void main13(String[] args) {
 		try {
 			Settings settings = Settings.builder().put("cluster.name", "cl-es-cluster")
 					.put("client.transport.sniff", true).put("client.transport.ping_timeout", "25s").build();
@@ -469,4 +480,49 @@ public class Controller {
 		}
 	}
 
+    public static void main1(String[] args) {
+		BufferedReader br = null;
+		try {
+			File file = new File("D:/test/手机号段-20171001-368630-全新版.csv");
+			if (file.isFile() && file.exists()) {
+
+				InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "gbk");
+				br = new BufferedReader(isr);
+				String lineTxt = null;
+
+				while ((lineTxt = br.readLine()) != null) {
+
+					if (CommonUtils.isNotString(lineTxt)) {
+						continue;
+					}
+					String[] str = lineTxt.split(",");
+					
+					List<MobileNumberSection> list = new ArrayList<MobileNumberSection>();
+					
+					MobileNumberSection section = new MobileNumberSection();
+					section.setId(UUIDTool.getInstance().getUUID());
+					section.setPrefix(str[0]);
+					section.setNumberSection(str[1]);
+					section.setProvince(str[2]);
+					section.setCity(str[3]);
+					section.setIsp(str[4]);
+					section.setPostCode(str[5]);
+					section.setCityCode(str[6]);
+					section.setAreaCode(str[7]);
+					section.setMobilePhoneType(str[8]);
+					
+					list.add(section);
+					
+					if (list.size() == 10000) {
+						
+					}
+					
+//					mongoTemplate
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+    
 }
