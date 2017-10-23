@@ -187,7 +187,7 @@ public class Controller {
 		return "hi " + name + ",i am from port:" + port;
 	}
 
-	public static void main1111111111111(String[] args) {
+	public static void main(String[] args) {
 
 		// 183.194.70.206:59200 172.16.20.20:9300
 		try {
@@ -198,10 +198,10 @@ public class Controller {
 			TransportClient client = new PreBuiltTransportClient(settings)
 					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("172.16.20.20"), 9300));
 
-			QueryBuilder qb = QueryBuilders.termsQuery("mobile", "18232207252");
+			QueryBuilder qb = QueryBuilders.termsQuery("mobile", "18521051719");
 
-			Long a = System.currentTimeMillis();
-			SearchResponse scrollResp = client.prepareSearch("201704").setQuery(qb).addSort("_doc", SortOrder.ASC)
+//			Long a = System.currentTimeMillis();
+			SearchResponse scrollResp = client.prepareSearch("201706").setQuery(qb).addSort("_doc", SortOrder.ASC)
 					.setScroll(new TimeValue(60000))
 
 					.setSize(100).get(); // max of 100 hits will be returned for
@@ -214,7 +214,7 @@ public class Controller {
 
 					System.out.println("i=" + i + ":" + hit.getId() + "," + hit.getSourceAsString());
 					JSONObject backjson = (JSONObject) JSONObject.parse(json);
-
+					System.out.println(backjson.toJSONString());
 					String account = backjson.getString("account");
 					map.put(account, account);
 
@@ -239,7 +239,7 @@ public class Controller {
 			// }
 			Long b = System.currentTimeMillis();
 
-			System.out.println(b - a);
+//			System.out.println(b - a);
 
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -404,7 +404,7 @@ public class Controller {
 			// TODO: handle exception
 		}
 	}
-	public static void main(String[] args) {
+	public static void main1234(String[] args) {
 		try {
 			Settings settings = Settings.builder().put("cluster.name", "cl-es-cluster")
 					.put("client.transport.sniff", true).put("client.transport.ping_timeout", "25s").build();
